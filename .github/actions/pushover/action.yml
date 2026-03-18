@@ -1,0 +1,29 @@
+name: "Pushover Notify"
+description: "Send a Pushover notification"
+
+inputs:
+  message:
+    description: "Message to send"
+    required: true
+  title:
+    description: "Notification title"
+    required: false
+    default: "CI Update"
+  priority:
+    description: "Pushover priority"
+    required: false
+    default: "0"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Send Pushover notification
+      shell: bash
+      run: |
+        curl -s \
+          --form-string "token=${{ secrets.PUSHOVER_APP_TOKEN }}" \
+          --form-string "user=${{ secrets.PUSHOVER_USER_KEY }}" \
+          --form-string "title=${{ inputs.title }}" \
+          --form-string "message=${{ inputs.message }}" \
+          --form-string "priority=${{ inputs.priority }}" \
+          https://api.pushover.net/1/messages.json
